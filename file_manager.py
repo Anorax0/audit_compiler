@@ -1,27 +1,35 @@
 import sys
 from openpyxl import load_workbook
-from colorama import Fore
-from colorama import init
+from colorama import init, Fore
 
 # initialize colorama
 init()
 
 
-def load_file(file_path):
-    try:
-        import warnings
+class FileManager:
+    def __init__(self, file_path):
+        self.file_path = file_path
 
-        warnings.simplefilter("ignore")
-        workbook = load_workbook(filename=file_path, read_only=True)
-        workbook = workbook['Sheet1']
-        warnings.simplefilter("default")
+    def load_file(self):
+        try:
+            import warnings
 
-        return workbook
+            warnings.simplefilter("ignore")
+            workbook = load_workbook(filename=self.file_path, read_only=True)
+            workbook = workbook['Sheet1']
+            warnings.simplefilter("default")
 
-    except FileNotFoundError:
-        sys.exit(Fore.RED + 'File not found.')
+            return workbook
+
+        except FileNotFoundError:
+            sys.exit(Fore.RED + 'File not found.')
+
+    def get_max_row(self):
+        workbook = self.load_file()
+        return workbook.max_row
 
 
 if __name__ == '__main__':
     file = 'Classifications 2019-11-18 23-00-00_2019-11-19 22-59-59.xlsx'
-    load_file(file)
+    wb = FileManager(file)
+    print(wb.get_max_row())

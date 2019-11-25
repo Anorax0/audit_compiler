@@ -1,8 +1,8 @@
 import sys
 from time import time
-import openpyxl
 
-from file_manager import load_file
+from record_checker import RecordChecker
+from file_manager import FileManager
 
 start_time = time()
 
@@ -15,17 +15,7 @@ else:
 # file_path = 'Classifications 2019-11-18 23-00-00_2019-11-19 22-59-59.xlsx'
 # person_to_audit = 'garbud'
 
-wb = load_file(file_path)
-
-records_list = []
-
-category_one = []
-category_two = []
-category_three = []
-category_four = []
-
-
-print(len(records_list))
+wb = FileManager(file_path).load_file()
 
 print(f'\nExecuting time: {time() - start_time:.3f}s')
 

@@ -34,16 +34,17 @@ class RecordChecker:
             return False
 
     def check_category_M(self):
-        if self.col_M != '':
+        if self.col_M != '' and self.col_M != 'None':
             return True
         else:
             return False
 
 
 if __name__ == '__main__':
-    from file_manager import load_file
+    from file_manager import FileManager
     file_path = 'Classifications 2019-11-18 23-00-00_2019-11-19 22-59-59.xlsx'
-    wb = load_file(file_path)
-    for num in range(2, 30):
+    wb = FileManager(file_path).load_file()
+    for num in range(2, 20):
         test = RecordChecker(num)
-        print(test.col_A, test.check_category_FG())
+        print(test.col_A, test.check_category_FG(), test.check_category_ED(),
+              test.check_category_J(), test.check_category_M())
