@@ -1,9 +1,10 @@
 import sys
 from openpyxl import load_workbook
-from colorama import init, Fore
+from colorama import Fore
+import colorama
 
 # initialize colorama
-init()
+colorama.init()
 
 
 class FileManager:
@@ -15,7 +16,7 @@ class FileManager:
             import warnings
 
             warnings.simplefilter("ignore")
-            workbook = load_workbook(filename=self.file_path, read_only=True)
+            workbook = load_workbook(filename=self.file_path)
             workbook = workbook['Sheet1']
             warnings.simplefilter("default")
 
