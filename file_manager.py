@@ -1,6 +1,5 @@
 import sys
 from openpyxl import load_workbook
-from colorama import Fore
 import colorama
 
 # initialize colorama
@@ -23,7 +22,7 @@ class FileManager:
             return workbook
 
         except FileNotFoundError:
-            sys.exit(Fore.RED + 'File not found.')
+            sys.exit(colorama.Fore.RED + 'File not found.')
 
     def get_max_row(self):
         workbook = self.load_file()
