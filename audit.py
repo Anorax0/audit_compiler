@@ -26,10 +26,14 @@ else:
 
 if input_percent > 1:
     input_percent = 1
+if input_percent < 0.1:
+    input_percent = 0.1
 
 records_length = 0
 
 workbook = FileManager(file_path)
+workbook.check_col_JK()
+
 wb = workbook.load_file()
 
 bar_row_length = Bar('Setting length of workbook', max=workbook.get_max_row())
@@ -48,6 +52,12 @@ category_FG_percent = round(records_length_percent * 0.3)
 category_J_percent = round(records_length_percent * 0.2)
 category_M_percent = round(records_length_percent * 0.1)
 
+# print(records_length_percent)
+# print(category_ED_percent)
+# print(category_FG_percent)
+# print(category_J_percent)
+# print(category_M_percent)
+
 category_ED = []
 category_FG = []
 # category_J = []
@@ -58,7 +68,6 @@ to_check_category_FG = []
 # to_check_category_J = []
 to_check_category_M = []
 all_categories = category_ED, category_FG, category_M
-
 
 bar_record_gathering = Bar('Gathering list of user\'s records', max=records_length)
 for row in range(2, workbook.get_max_row()+1):
@@ -82,8 +91,7 @@ if category_FG_percent > len(category_FG):
     category_M_percent += category_FG_percent-len(category_FG)
     category_FG_percent = len(category_FG)
 
-bar_record_randomize = Bar('Randomizing user\'s records', max=(records_length_percent-category_M_percent))
-
+bar_record_randomize = Bar('Randomizing user\'s records', max=records_length_percent)
 while category_ED_percent != 0:
     if len(category_ED) == 0:
         break
@@ -122,6 +130,11 @@ bar_record_randomize.finish()
 if bar_record_randomize.max > bar_record_randomize.index:
     print(colorama.Fore.RED + 'Cannot find enough records to fill criteria.')
     print(colorama.Style.RESET_ALL, end='')
+
+print(to_check_category_ED, to_check_category_FG, to_check_category_M)
+
+records_to_check_list = [i for i in chain(to_check_category_ED, to_check_category_FG, to_check_category_M)]
+workbook.save_workbook(records_to_check_list)
 
 print(f'\n Executing time: { (time() - start_time):.3f}s')
 

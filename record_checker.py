@@ -28,7 +28,7 @@ class RecordChecker:
             return False
 
     def check_category_J(self):
-        if self.col_J != '':
+        if self.col_J != '' or self.col_J == 'PENDING' or self.col_J == 'SUBMITTED':
             return True
         else:
             return False
