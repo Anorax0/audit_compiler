@@ -3,14 +3,20 @@
 # Created by: PyQt5 UI code generator 5.13.2
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QComboBox
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5 import QtCore, QtWidgets
 from file_manager import FileManager
 from record_checker import RecordChecker
+import colorama
 import sys
 import os
+from time import time
+from itertools import chain
+from random import choice
 
 DIR = os.getcwd()
+
+colorama.init()
 
 
 class UiMainWindow(QWidget):
@@ -65,7 +71,6 @@ class UiMainWindow(QWidget):
         self.compile_btn.clicked.connect(self.compile_file)
         self.loadfile_btn.clicked.connect(self.open_file_browser)
 
-
         self.retranslateUi(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
 
@@ -75,7 +80,7 @@ class UiMainWindow(QWidget):
 
         def test_file(file_path):
             try:
-                file = FileManager(filename)
+                file = FileManager(file_path)
                 return True
             except FileNotFoundError:
                 return False
@@ -93,14 +98,125 @@ class UiMainWindow(QWidget):
 
             self.combo.addItems(available_person)
 
-
             self.compile_btn.setEnabled(True)
             self.percent_box.setEnabled(True)
             self.combo.setEnabled(True)
             self.file_name = filename
 
     def compile_file(self):
-        print(self.file_name)
+        start_time = time()
+
+        records_length = 0
+
+        workbook = FileManager(self.file_name)
+        if workbook.check_col_JK():
+            print(colorama.Fore.RED + 'Some of records are not REVIEWED/PENDING')
+            print(colorama.Style.RESET_ALL, end='')
+
+        wb = workbook.load_file()
+
+        for row in range(2, workbook.get_max_row() + 1):
+            record = RecordChecker(wb, row)
+            if record.col_H == self.combo.currentText():
+                records_length += 1
+        self.progressBar.setProperty("value", 20)
+
+        # do math.ceil(number) to round up the float to whole integer
+        records_length_percent = round(records_length * float(self.percent_box.text()))
+        category_ED_percent = round(records_length_percent * 0.4)
+        category_FG_percent = round(records_length_percent * 0.3)
+        # category_J_percent = round(records_length_percent * 0.2)
+        category_M_percent = round(records_length_percent * 0.1)
+
+        print('All records person should check: ', records_length_percent)
+        # print(category_ED_percent)
+        # print(category_FG_percent)
+        # print(category_J_percent)
+        # print(category_M_percent)
+
+        category_ED = []
+        category_FG = []
+        # category_J = []
+        category_M = []
+
+        to_check_category_ED = []
+        to_check_category_FG = []
+        # to_check_category_J = []
+        to_check_category_M = []
+        all_categories = category_ED, category_FG, category_M
+
+        for row in range(2, workbook.get_max_row() + 1):
+            record = RecordChecker(wb, row)
+            if record.col_H == self.combo.currentText():
+                if record.check_category_ED() and row not in chain(*all_categories):
+                    category_ED.append(row)
+                if record.check_category_FG() and row not in chain(*all_categories):
+                    category_FG.append(row)
+                # if record.check_category_J() and row not in chain(*all_categories):
+                #     category_J.append(row)
+                if record.check_category_M() and row not in chain(*all_categories):
+                    category_M.append(row)
+        self.progressBar.setProperty("value", 50)
+
+        if category_ED_percent > len(category_ED):
+            category_FG_percent += category_ED_percent - len(category_ED)
+            category_ED_percent = len(category_ED)
+        if category_FG_percent > len(category_FG):
+            category_M_percent += category_FG_percent - len(category_FG)
+            category_FG_percent = len(category_FG)
+
+        while category_ED_percent != 0:
+            if len(category_ED) == 0:
+                break
+            if len(to_check_category_ED) == category_ED_percent:
+                break
+            # if category_ED_percent
+            record_to_add = choice(category_ED)
+            if record_to_add not in to_check_category_ED:
+                to_check_category_ED.append(record_to_add)
+                category_ED_percent -= 1
+        self.progressBar.setProperty("value", 55)
+
+        while category_FG_percent != 0:
+            if len(category_FG) == 0:
+                break
+            if len(to_check_category_FG) == category_FG_percent:
+                break
+            record_to_add = choice(category_FG)
+            if record_to_add not in to_check_category_FG:
+                to_check_category_FG.append(record_to_add)
+                category_FG_percent -= 1
+        self.progressBar.setProperty("value", 62)
+
+        while category_M_percent != 0:
+            if len(category_M) == 0:
+                break
+            if len(to_check_category_M) == category_M_percent:
+                break
+            record_to_add = choice(category_M)
+            if record_to_add not in to_check_category_M:
+                to_check_category_M.append(record_to_add)
+                category_M_percent -= 1
+        self.progressBar.setProperty("value", 68)
+
+        # bar_record_randomize.finish()
+        # if bar_record_randomize.max > bar_record_randomize.index:
+        #     print(colorama.Fore.RED + 'Cannot find enough records to fill criteria.')
+        #     print(colorama.Style.RESET_ALL, end='')
+
+        print('Rows with choosen records to check: ')
+        print('ED rows: ', to_check_category_ED)
+        print('FG rows: ', to_check_category_FG)
+        print('M rows :', to_check_category_M)
+
+        self.progressBar.setProperty("value", 82)
+
+        records_to_check_list = [i for i in chain(to_check_category_ED, to_check_category_FG, to_check_category_M)]
+        workbook.save_workbook(records_to_check_list)
+
+        self.progressBar.setProperty("value", 100)
+
+        print(f'\n Executing time: {(time() - start_time):.3f}s')
 
     def retranslateUi(self, main_window):
         _translate = QtCore.QCoreApplication.translate

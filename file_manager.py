@@ -31,8 +31,7 @@ class FileManager:
         workbook = load_workbook(self.file_path)
         ws = workbook['Sheet1']
 
-        # workbook = self.load_file()
-
+        i = 0
         for row in range(2, self.get_max_row() + 1):
             if str(ws[f'J{row}'].value) == 'REVIEWED' or str(ws[f'J{row}'].value) == 'PENDING':
                 pass
@@ -40,7 +39,13 @@ class FileManager:
                 pattern = PatternFill("solid", fgColor="FF0000")
                 for cell in ws[row:row]:
                     cell.fill = pattern
+                i += 1
         workbook.save(self.file_path)
+
+        if i > 0:
+            return True
+        else:
+            return False
 
     def get_max_row(self):
         workbook = self.load_file()
