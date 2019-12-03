@@ -121,6 +121,8 @@ class UiMainWindow(QWidget):
                 records_length += 1
         self.progressBar.setProperty("value", 20)
 
+        print('Length of all records of a person :', records_length)
+
         # do math.ceil(number) to round up the float to whole integer
         records_length_percent = round(records_length * float(self.percent_box.text()))
         category_ED_percent = round(records_length_percent * 0.4)
@@ -129,10 +131,10 @@ class UiMainWindow(QWidget):
         category_M_percent = round(records_length_percent * 0.1)
 
         print('All records person should check: ', records_length_percent)
-        # print(category_ED_percent)
-        # print(category_FG_percent)
+        print('ED category records to check', category_ED_percent)
+        print('FG category records to check', category_FG_percent)
         # print(category_J_percent)
-        # print(category_M_percent)
+        print('M category records to check', category_M_percent)
 
         category_ED = []
         category_FG = []
@@ -157,6 +159,12 @@ class UiMainWindow(QWidget):
                 if record.check_category_M() and row not in chain(*all_categories):
                     category_M.append(row)
         self.progressBar.setProperty("value", 50)
+
+        print('List of records of a given category:')
+        print('ED list :', category_ED)
+        print('FG list :', category_FG)
+        # category_J
+        print('M list :', category_M)
 
         if category_ED_percent > len(category_ED):
             category_FG_percent += category_ED_percent - len(category_ED)
