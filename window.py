@@ -46,11 +46,9 @@ class UiMainWindow(QWidget):
         self.loadfile_btn.setGeometry(QtCore.QRect(10, 30, 89, 23))
         self.loadfile_btn.setObjectName("loadfile_btn")
 
-        # self.combo = QComboBox(self)
         self.combo = QtWidgets.QComboBox(self.centralwidget)
         self.combo.setEnabled(False)
         self.combo.setGeometry(QtCore.QRect(10, 70, 113, 23))
-        # self.login_box.setObjectName("login_box")
 
         self.percent_box = QtWidgets.QLineEdit(self.centralwidget)
         self.percent_box.setEnabled(False)
@@ -131,10 +129,10 @@ class UiMainWindow(QWidget):
         category_M_percent = round(records_length_percent * 0.1)
 
         print('All records person should check: ', records_length_percent)
-        print('ED category records to check', category_ED_percent)
-        print('FG category records to check', category_FG_percent)
+        print('ED category records to check: ', category_ED_percent)
+        print('FG category records to check: ', category_FG_percent)
         # print(category_J_percent)
-        print('M category records to check', category_M_percent)
+        print('M category records to check: ', category_M_percent)
 
         category_ED = []
         category_FG = []
@@ -150,13 +148,13 @@ class UiMainWindow(QWidget):
         for row in range(2, workbook.get_max_row() + 1):
             record = RecordChecker(wb, row)
             if record.col_H == self.combo.currentText():
-                if record.check_category_ED() and row not in chain(*all_categories):
+                if record.check_category_ED():
                     category_ED.append(row)
-                if record.check_category_FG() and row not in chain(*all_categories):
+                if record.check_category_FG():
                     category_FG.append(row)
                 # if record.check_category_J() and row not in chain(*all_categories):
                 #     category_J.append(row)
-                if record.check_category_M() and row not in chain(*all_categories):
+                if record.check_category_M():
                     category_M.append(row)
         self.progressBar.setProperty("value", 50)
 
@@ -176,9 +174,6 @@ class UiMainWindow(QWidget):
         while category_ED_percent != 0:
             if len(category_ED) == 0:
                 break
-            if len(to_check_category_ED) == category_ED_percent:
-                break
-            # if category_ED_percent
             record_to_add = choice(category_ED)
             if record_to_add not in to_check_category_ED:
                 to_check_category_ED.append(record_to_add)
@@ -188,8 +183,6 @@ class UiMainWindow(QWidget):
         while category_FG_percent != 0:
             if len(category_FG) == 0:
                 break
-            if len(to_check_category_FG) == category_FG_percent:
-                break
             record_to_add = choice(category_FG)
             if record_to_add not in to_check_category_FG:
                 to_check_category_FG.append(record_to_add)
@@ -198,8 +191,6 @@ class UiMainWindow(QWidget):
 
         while category_M_percent != 0:
             if len(category_M) == 0:
-                break
-            if len(to_check_category_M) == category_M_percent:
                 break
             record_to_add = choice(category_M)
             if record_to_add not in to_check_category_M:
@@ -212,10 +203,10 @@ class UiMainWindow(QWidget):
         #     print(colorama.Fore.RED + 'Cannot find enough records to fill criteria.')
         #     print(colorama.Style.RESET_ALL, end='')
 
-        print('Rows with choosen records to check: ')
+        print(colorama.Fore.YELLOW + 'Rows with chosen records to check: ')
         print('ED rows: ', to_check_category_ED)
         print('FG rows: ', to_check_category_FG)
-        print('M rows :', to_check_category_M)
+        print('M rows :', to_check_category_M, colorama.Style.RESET_ALL)
 
         self.progressBar.setProperty("value", 82)
 
