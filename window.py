@@ -79,8 +79,16 @@ class UiMainWindow(QWidget):
         def test_file(file_path):
             try:
                 file = FileManager(file_path)
+                del file
                 return True
             except FileNotFoundError:
+                print('File not found.')
+                return False
+            except PermissionError:
+                print('Permission error.')
+                return False
+            except IOError:
+                print('Cannot open a file.')
                 return False
 
         if test_file(filename):
@@ -143,7 +151,7 @@ class UiMainWindow(QWidget):
         to_check_category_FG = []
         # to_check_category_J = []
         to_check_category_M = []
-        all_categories = category_ED, category_FG, category_M
+        # all_categories = category_ED, category_FG, category_M
 
         for row in range(2, workbook.get_max_row() + 1):
             record = RecordChecker(wb, row)
