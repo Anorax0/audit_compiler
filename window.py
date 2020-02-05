@@ -94,7 +94,7 @@ class UiMainWindow(QWidget):
                 if record.col_H not in available_person:
                     available_person.append(record.col_H)
 
-            self.combo.addItems(available_person)
+            self.combo.addItems(sorted(set(available_person)))
 
             self.compile_btn.setEnabled(True)
             self.percent_box.setEnabled(True)
