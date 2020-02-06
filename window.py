@@ -3,9 +3,9 @@
 # Created by: PyQt5 UI code generator 5.13.2
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QMessageBox
 from PyQt5 import QtCore, QtWidgets
-from file_manager import FileManager
+from file_manager import FileManager, warning_box
 from record_checker import RecordChecker
 import colorama
 import sys
@@ -82,14 +82,15 @@ class UiMainWindow(QWidget):
                 del file
                 return True
             except FileNotFoundError:
-                print('File not found.')
-                return False
+                warning_box('File not found!', 'File not found.')
+                sys.exit(1)
             except PermissionError:
-                print('Permission error.')
-                return False
+                warning_box('Permision Error!',
+                            'File is running in different process. Please close other processes to work with this file.')
+                sys.exit(1)
             except IOError:
-                print('Cannot open a file.')
-                return False
+                warning_box('Opening file failed!', 'Cannot open this file.')
+                sys.exit(1)
 
         if test_file(filename):
             workbook = FileManager(filename)

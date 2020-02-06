@@ -1,4 +1,5 @@
 import sys
+from PyQt5.QtWidgets import QMessageBox
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import PatternFill
 import colorama
@@ -6,6 +7,13 @@ from record_checker import RecordChecker
 
 # initialize colorama
 colorama.init()
+
+
+def warning_box(title, message):
+    warning = QMessageBox()
+    warning.setWindowTitle(title)
+    warning.setText(message)
+    warning.exec_()
 
 
 class FileManager:
@@ -25,7 +33,12 @@ class FileManager:
             return workbook
 
         except FileNotFoundError:
-            sys.exit(colorama.Fore.RED + 'File not found.')
+            warning_box('File not found!', 'File not found.')
+            sys.exit(1)
+        except PermissionError:
+            warning_box('Permision Error!',
+                        'File is running in different process. Please close other processes to work with this file.')
+            sys.exit(1)
 
     def check_col_JK(self):
         workbook = load_workbook(self.file_path)
@@ -40,7 +53,13 @@ class FileManager:
                 for cell in ws[row:row]:
                     cell.fill = pattern
                 i += 1
-        workbook.save(self.file_path)
+        try:
+            workbook.save(self.file_path)
+        except PermissionError:
+            warning_box('Permision Error!',
+                        'File is running in different process. Please close other processes to work with this file.')
+            sys.exit(1)
+
 
         if i > 0:
             return True
@@ -98,7 +117,13 @@ class FileManager:
             ws.save(self.file_path)
         except BaseException as e:
             print(e)
-            sys.exit(colorama.Fore.RED + 'Something gone wrong during saving records to new worksheet.')
+            warning_box('Error!',
+                        'Something gone wrong during saving records to new worksheet.')
+            sys.exit(1)
+        except PermissionError:
+            warning_box('Permision Error!',
+                        'File is running in different process. Please close other processes to work with this file.')
+            sys.exit(1)
         finally:
             warnings.simplefilter("default")
 
