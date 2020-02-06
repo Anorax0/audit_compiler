@@ -80,13 +80,13 @@ for row in range(2, workbook.get_max_row()+1):
     record = RecordChecker(wb, row)
     if record.col_H == person_to_audit:
         # if record.check_category_ED() and row not in chain(*all_categories):
-        if record.check_category_ED():
+        if record.check_category_ed():
             category_ED.append(row)
-        if record.check_category_FG():
+        if record.check_category_fg():
             category_FG.append(row)
         # if record.check_category_J() and row not in chain(*all_categories):
         #     category_J.append(row)
-        if record.check_category_M():
+        if record.check_category_m():
             category_M.append(row)
         bar_record_gathering.next()
 bar_record_gathering.finish()

@@ -3,16 +3,16 @@
 # Created by: PyQt5 UI code generator 5.13.2
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QMessageBox
-from PyQt5 import QtCore, QtWidgets
-from file_manager import FileManager, warning_box
-from record_checker import RecordChecker
-import colorama
 import sys
 import os
 from time import time
 from itertools import chain
 from random import choice
+import colorama
+from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5 import QtCore, QtWidgets
+from file_manager import FileManager, warning_box
+from record_checker import RecordChecker
 
 DIR = os.getcwd()
 
@@ -73,10 +73,19 @@ class UiMainWindow(QWidget):
         QtCore.QMetaObject.connectSlotsByName(main_window)
 
     def open_file_browser(self):
+        """
+        Open file browser
+        :return: object
+        """
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open XLSX File', DIR,
                                                             'Excel Files (*.xls *.xml *.xlsx *.xlsm)')
 
         def test_file(file_path):
+            """
+            Tests if file can be opened
+            :param file_path:
+            :return:
+            """
             try:
                 file = FileManager(file_path)
                 del file
@@ -86,7 +95,8 @@ class UiMainWindow(QWidget):
                 sys.exit(1)
             except PermissionError:
                 warning_box('Permision Error!',
-                            'File is running in different process. Please close other processes to work with this file.')
+                            'File is running in different process. '
+                            'Please close other processes to work with this file.')
                 sys.exit(1)
             except IOError:
                 warning_box('Opening file failed!', 'Cannot open this file.')
@@ -100,8 +110,8 @@ class UiMainWindow(QWidget):
 
             for row in range(2, workbook.get_max_row() + 1):
                 record = RecordChecker(wb, row)
-                if record.col_H not in available_person:
-                    available_person.append(record.col_H)
+                if record.col_h not in available_person:
+                    available_person.append(record.col_h)
 
             self.combo.addItems(sorted(set(available_person)))
 
@@ -111,20 +121,26 @@ class UiMainWindow(QWidget):
             self.file_name = filename
 
     def compile_file(self):
+        """
+        Compiles records in file due to criteria
+        :return: None
+        """
+
         start_time = time()
 
         records_length = 0
 
-        workbook = FileManager(self.file_name)
-        if workbook.check_col_JK():
+        workbook_file = FileManager(self.file_name)
+
+        if workbook_file.check_col_jk():
             print(colorama.Fore.RED + 'Some of records are not REVIEWED/PENDING')
             print(colorama.Style.RESET_ALL, end='')
 
-        wb = workbook.load_file()
+        workbook = workbook_file.load_file()
 
-        for row in range(2, workbook.get_max_row() + 1):
-            record = RecordChecker(wb, row)
-            if record.col_H == self.combo.currentText():
+        for row in range(2, workbook_file.get_max_row() + 1):
+            record = RecordChecker(workbook, row)
+            if record.col_h == self.combo.currentText():
                 records_length += 1
         self.progressBar.setProperty("value", 20)
 
@@ -132,79 +148,79 @@ class UiMainWindow(QWidget):
 
         # do math.ceil(number) to round up the float to whole integer
         records_length_percent = round(records_length * float(self.percent_box.text()))
-        category_ED_percent = round(records_length_percent * 0.4)
-        category_FG_percent = round(records_length_percent * 0.3)
+        category_ed_percent = round(records_length_percent * 0.4)
+        category_fg_percent = round(records_length_percent * 0.3)
         # category_J_percent = round(records_length_percent * 0.2)
-        category_M_percent = round(records_length_percent * 0.1)
+        category_m_percent = round(records_length_percent * 0.1)
 
         print('All records person should check: ', records_length_percent)
-        print('ED category records to check: ', category_ED_percent)
-        print('FG category records to check: ', category_FG_percent)
+        print('ED category records to check: ', category_ed_percent)
+        print('FG category records to check: ', category_fg_percent)
         # print(category_J_percent)
-        print('M category records to check: ', category_M_percent)
+        print('M category records to check: ', category_m_percent)
 
-        category_ED = []
-        category_FG = []
+        category_ed = []
+        category_fg = []
         # category_J = []
-        category_M = []
+        category_m = []
 
-        to_check_category_ED = []
-        to_check_category_FG = []
+        to_check_category_ed = []
+        to_check_category_fg = []
         # to_check_category_J = []
-        to_check_category_M = []
-        # all_categories = category_ED, category_FG, category_M
+        to_check_category_m = []
+        # all_categories = category_ed, category_fg, category_m
 
-        for row in range(2, workbook.get_max_row() + 1):
-            record = RecordChecker(wb, row)
-            if record.col_H == self.combo.currentText():
-                if record.check_category_ED():
-                    category_ED.append(row)
-                if record.check_category_FG():
-                    category_FG.append(row)
+        for row in range(2, workbook_file.get_max_row() + 1):
+            record = RecordChecker(workbook, row)
+            if record.col_h == self.combo.currentText():
+                if record.check_category_ed():
+                    category_ed.append(row)
+                if record.check_category_fg():
+                    category_fg.append(row)
                 # if record.check_category_J() and row not in chain(*all_categories):
                 #     category_J.append(row)
-                if record.check_category_M():
-                    category_M.append(row)
+                if record.check_category_m():
+                    category_m.append(row)
         self.progressBar.setProperty("value", 50)
 
         print('List of records of a given category:')
-        print('ED list :', category_ED)
-        print('FG list :', category_FG)
+        print('ED list :', category_ed)
+        print('FG list :', category_fg)
         # category_J
-        print('M list :', category_M)
+        print('M list :', category_m)
 
-        if category_ED_percent > len(category_ED):
-            category_FG_percent += category_ED_percent - len(category_ED)
-            category_ED_percent = len(category_ED)
-        if category_FG_percent > len(category_FG):
-            category_M_percent += category_FG_percent - len(category_FG)
-            category_FG_percent = len(category_FG)
+        if category_ed_percent > len(category_ed):
+            category_fg_percent += category_ed_percent - len(category_ed)
+            category_ed_percent = len(category_ed)
+        if category_fg_percent > len(category_fg):
+            category_m_percent += category_fg_percent - len(category_fg)
+            category_fg_percent = len(category_fg)
 
-        while category_ED_percent != 0:
-            if len(category_ED) == 0:
+        while category_ed_percent != 0:
+            if len(category_ed) == 0:
                 break
-            record_to_add = choice(category_ED)
-            if record_to_add not in to_check_category_ED:
-                to_check_category_ED.append(record_to_add)
-                category_ED_percent -= 1
+            record_to_add = choice(category_ed)
+            if record_to_add not in to_check_category_ed:
+                to_check_category_ed.append(record_to_add)
+                category_ed_percent -= 1
         self.progressBar.setProperty("value", 55)
 
-        while category_FG_percent != 0:
-            if len(category_FG) == 0:
+        while category_fg_percent != 0:
+            if len(category_fg) == 0:
                 break
-            record_to_add = choice(category_FG)
-            if record_to_add not in to_check_category_FG:
-                to_check_category_FG.append(record_to_add)
-                category_FG_percent -= 1
+            record_to_add = choice(category_fg)
+            if record_to_add not in to_check_category_fg:
+                to_check_category_fg.append(record_to_add)
+                category_fg_percent -= 1
         self.progressBar.setProperty("value", 62)
 
-        while category_M_percent != 0:
-            if len(category_M) == 0:
+        while category_m_percent != 0:
+            if len(category_m) == 0:
                 break
-            record_to_add = choice(category_M)
-            if record_to_add not in to_check_category_M:
-                to_check_category_M.append(record_to_add)
-                category_M_percent -= 1
+            record_to_add = choice(category_m)
+            if record_to_add not in to_check_category_m:
+                to_check_category_m.append(record_to_add)
+                category_m_percent -= 1
         self.progressBar.setProperty("value", 68)
 
         # bar_record_randomize.finish()
@@ -213,20 +229,26 @@ class UiMainWindow(QWidget):
         #     print(colorama.Style.RESET_ALL, end='')
 
         print(colorama.Fore.YELLOW + 'Rows with chosen records to check: ')
-        print('ED rows: ', to_check_category_ED)
-        print('FG rows: ', to_check_category_FG)
-        print('M rows :', to_check_category_M, colorama.Style.RESET_ALL)
+        print('ED rows: ', to_check_category_ed)
+        print('FG rows: ', to_check_category_fg)
+        print('M rows :', to_check_category_m, colorama.Style.RESET_ALL)
 
         self.progressBar.setProperty("value", 82)
 
-        records_to_check_list = [i for i in chain(to_check_category_ED, to_check_category_FG, to_check_category_M)]
-        workbook.save_workbook(records_to_check_list)
+        # chained_categories = chain(to_check_category_ed, to_check_category_fg, to_check_category_m)
+        records_to_check_list = chain(to_check_category_ed, to_check_category_fg, to_check_category_m)
+        workbook_file.save_workbook(records_to_check_list)
 
         self.progressBar.setProperty("value", 100)
 
         print(f'\n Executing time: {(time() - start_time):.3f}s')
 
     def retranslateUi(self, main_window):
+        """
+        PyQt5 method
+        :param main_window:
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         main_window.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.welcome_label.setText(_translate("MainWindow", "Audit Excel Compiler"))
@@ -238,12 +260,19 @@ class UiMainWindow(QWidget):
 
 
 class ExampleApp(QtWidgets.QMainWindow, UiMainWindow):
+    """
+    Executing code
+    """
     def __init__(self, parent=None):
         super(ExampleApp, self).__init__(parent)
         self.setupUi(self)
 
 
 def main():
+    """
+    Runs all together
+    :return: QtPy5 object
+    """
     app = QApplication(sys.argv)
     form = ExampleApp()
     form.show()

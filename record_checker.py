@@ -1,40 +1,40 @@
 class RecordChecker:
     def __init__(self, workbook, position):
         self.wb = workbook
-        self.col_A = self.wb[f'A{position}'].value
-        self.col_B = self.wb[f'B{position}'].value
-        self.col_C = self.wb[f'C{position}'].value
-        self.col_D = self.wb[f'D{position}'].value
-        self.col_E = self.wb[f'E{position}'].value
-        self.col_F = self.wb[f'F{position}'].value
-        self.col_G = self.wb[f'G{position}'].value
-        self.col_H = self.wb[f'H{position}'].value
-        self.col_I = self.wb[f'I{position}'].value
-        self.col_J = self.wb[f'J{position}'].value
-        self.col_K = self.wb[f'K{position}'].value
-        self.col_L = self.wb[f'L{position}'].value
-        self.col_M = self.wb[f'M{position}'].value
+        self.col_a = self.wb[f'A{position}'].value
+        self.col_b = self.wb[f'B{position}'].value
+        self.col_c = self.wb[f'C{position}'].value
+        self.col_d = self.wb[f'D{position}'].value
+        self.col_e = self.wb[f'E{position}'].value
+        self.col_f = self.wb[f'F{position}'].value
+        self.col_g = self.wb[f'G{position}'].value
+        self.col_h = self.wb[f'H{position}'].value
+        self.col_i = self.wb[f'I{position}'].value
+        self.col_j = self.wb[f'J{position}'].value
+        self.col_k = self.wb[f'K{position}'].value
+        self.col_l = self.wb[f'L{position}'].value
+        self.col_m = self.wb[f'M{position}'].value
 
-    def check_category_FG(self):
-        if self.col_F != '' or self.col_G != '':
+    def check_category_fg(self):
+        if self.col_f != '' or self.col_g != '':
             return True
         else:
             return False
 
-    def check_category_ED(self):
-        if self.col_E != '' or self.col_D != '':
+    def check_category_ed(self):
+        if self.col_e != '' or self.col_d != '':
             return True
         else:
             return False
 
-    def check_category_J(self):
-        if self.col_J != '' or self.col_J == 'PENDING' or self.col_J == 'SUBMITTED':
+    def check_category_j(self):
+        if self.col_j != '' or self.col_j == 'PENDING' or self.col_j == 'SUBMITTED':
             return True
         else:
             return False
 
-    def check_category_M(self):
-        if self.col_M != '' and self.col_M != 'None':
+    def check_category_m(self):
+        if self.col_m != '' and self.col_m != 'None':
             return True
         else:
             return False
@@ -46,5 +46,5 @@ if __name__ == '__main__':
     wb = FileManager(file_path).load_file()
     for num in range(2, 20):
         test = RecordChecker(wb, num)
-        print(test.col_A, test.check_category_FG(), test.check_category_ED(),
-              test.check_category_J(), test.check_category_M())
+        print(test.col_a, test.check_category_fg(), test.check_category_ed(),
+              test.check_category_j(), test.check_category_m())

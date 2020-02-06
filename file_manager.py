@@ -1,4 +1,9 @@
+"""
+Module handling excel file
+"""
+
 import sys
+import warnings
 from PyQt5.QtWidgets import QMessageBox
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import PatternFill
@@ -10,6 +15,13 @@ colorama.init()
 
 
 def warning_box(title, message):
+    """
+    Displays warning box
+    :param title: str
+    :param message: str
+    :return: None
+    """
+
     warning = QMessageBox()
     warning.setWindowTitle(title)
     warning.setText(message)
@@ -17,13 +29,21 @@ def warning_box(title, message):
 
 
 class FileManager:
+    """
+    Class manager for excel file
+    """
+
     def __init__(self, file_path):
         self.file_path = file_path
         self.wb = Workbook()
 
     def load_file(self):
+        """
+        Load the file
+        :return: workbook object
+        """
+
         try:
-            import warnings
 
             warnings.simplefilter("ignore")
             workbook = load_workbook(filename=self.file_path)
@@ -37,10 +57,16 @@ class FileManager:
             sys.exit(1)
         except PermissionError:
             warning_box('Permision Error!',
-                        'File is running in different process. Please close other processes to work with this file.')
+                        'File is running in different process. '
+                        'Please close other processes to work with this file.')
             sys.exit(1)
 
-    def check_col_JK(self):
+    def check_col_jk(self):
+        """
+        Checks column J and K in workbook for incorrect records
+        :return: boolean
+        """
+
         workbook = load_workbook(self.file_path)
         ws = workbook['Sheet1']
 
@@ -57,23 +83,32 @@ class FileManager:
             workbook.save(self.file_path)
         except PermissionError:
             warning_box('Permision Error!',
-                        'File is running in different process. Please close other processes to work with this file.')
+                        'File is running in different process. '
+                        'Please close other processes to work with this file.')
             sys.exit(1)
-
 
         if i > 0:
             return True
-        else:
-            return False
+        # else:
+        #     return False
 
     def get_max_row(self):
+        """
+        Get int of last row in workbook
+        :return: int
+        """
+
         workbook = self.load_file()
         return workbook.max_row
 
     def save_workbook(self, records_list):
-        import warnings
-        warnings.simplefilter("ignore")
+        """
+        Saves the workbook
+        :param records_list: list
+        :return: None
+        """
 
+        warnings.simplefilter("ignore")
         try:
             ws = load_workbook(self.file_path)
             if 'Audit' in ws.sheetnames:
@@ -101,28 +136,29 @@ class FileManager:
 
             for i, row in enumerate(records_list, start=2):
                 checker = RecordChecker(ws['Sheet1'], row)
-                audit_sheet[f'A{i}'] = checker.col_A
-                audit_sheet[f'B{i}'] = checker.col_B
-                audit_sheet[f'C{i}'] = checker.col_C
-                audit_sheet[f'D{i}'] = checker.col_D
-                audit_sheet[f'E{i}'] = checker.col_E
-                audit_sheet[f'F{i}'] = checker.col_F
-                audit_sheet[f'G{i}'] = checker.col_G
-                audit_sheet[f'H{i}'] = checker.col_H
-                audit_sheet[f'I{i}'] = checker.col_I
-                audit_sheet[f'J{i}'] = checker.col_J
-                audit_sheet[f'K{i}'] = checker.col_K
-                audit_sheet[f'L{i}'] = checker.col_L
-                audit_sheet[f'M{i}'] = checker.col_M
+                audit_sheet[f'A{i}'] = checker.col_a
+                audit_sheet[f'B{i}'] = checker.col_b
+                audit_sheet[f'C{i}'] = checker.col_c
+                audit_sheet[f'D{i}'] = checker.col_d
+                audit_sheet[f'E{i}'] = checker.col_e
+                audit_sheet[f'F{i}'] = checker.col_f
+                audit_sheet[f'G{i}'] = checker.col_g
+                audit_sheet[f'H{i}'] = checker.col_h
+                audit_sheet[f'I{i}'] = checker.col_i
+                audit_sheet[f'J{i}'] = checker.col_j
+                audit_sheet[f'K{i}'] = checker.col_k
+                audit_sheet[f'L{i}'] = checker.col_l
+                audit_sheet[f'M{i}'] = checker.col_m
             ws.save(self.file_path)
-        except BaseException as e:
-            print(e)
-            warning_box('Error!',
-                        'Something gone wrong during saving records to new worksheet.')
-            sys.exit(1)
         except PermissionError:
             warning_box('Permision Error!',
-                        'File is running in different process. Please close other processes to work with this file.')
+                        'File is running in different process. '
+                        'Please close other processes to work with this file.')
+            sys.exit(1)
+        except BaseException as error:
+            print(error)
+            warning_box('Error!',
+                        'Something gone wrong during saving records to new worksheet.')
             sys.exit(1)
         finally:
             warnings.simplefilter("default")
