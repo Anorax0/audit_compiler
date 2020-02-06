@@ -60,6 +60,10 @@ class FileManager:
                         'File is running in different process. '
                         'Please close other processes to work with this file.')
             sys.exit(1)
+        except KeyError:
+            warning_box('File Format Error!',
+                        'Incorrect format of file or wrong file.')
+            sys.exit(1)
 
     def check_col_jk(self):
         """
@@ -165,8 +169,9 @@ class FileManager:
 
 
 if __name__ == '__main__':
-    file = 'test.xlsx'
-    wb = FileManager(file)
-    wkb = wb.load_file()
-    records = [168, 147, 144, 107, 135, 142, 248]
-    wb.save_workbook(records)
+    pass
+    # file = 'test.xlsx'
+    # wb = FileManager(file)
+    # wkb = wb.load_file()
+    # records = [168, 147, 144, 107, 135, 142, 248]
+    # wb.save_workbook(records)

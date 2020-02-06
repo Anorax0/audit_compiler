@@ -1,4 +1,12 @@
+"""
+Module handler for records
+"""
+
+
 class RecordChecker:
+    """
+    Handler class
+    """
     def __init__(self, workbook, position):
         self.wb = workbook
         self.col_a = self.wb[f'A{position}'].value
@@ -16,35 +24,52 @@ class RecordChecker:
         self.col_m = self.wb[f'M{position}'].value
 
     def check_category_fg(self):
+        """
+        Checks column F and G with criteria
+        :return: boolean
+        """
         if self.col_f != '' or self.col_g != '':
             return True
-        else:
-            return False
+        # else:
+        #     return False
 
     def check_category_ed(self):
+        """
+        Checks column E and D with criteria
+        :return: boolean
+        """
         if self.col_e != '' or self.col_d != '':
             return True
-        else:
-            return False
+        # else:
+        #     return False
 
     def check_category_j(self):
+        """
+        Checks column J with criteria
+        :return: boolean
+        """
         if self.col_j != '' or self.col_j == 'PENDING' or self.col_j == 'SUBMITTED':
             return True
-        else:
-            return False
+        # else:
+        #     return False
 
     def check_category_m(self):
+        """
+        Checks column M with criteria
+        :return: boolean
+        """
         if self.col_m != '' and self.col_m != 'None':
             return True
-        else:
-            return False
+        # else:
+        #     return False
 
 
 if __name__ == '__main__':
-    from file_manager import FileManager
-    file_path = 'Classifications 2019-11-18 23-00-00_2019-11-19 22-59-59.xlsx'
-    wb = FileManager(file_path).load_file()
-    for num in range(2, 20):
-        test = RecordChecker(wb, num)
-        print(test.col_a, test.check_category_fg(), test.check_category_ed(),
-              test.check_category_j(), test.check_category_m())
+    pass
+    # from file_manager import FileManager
+    # file_path = 'Classifications 2019-11-18 23-00-00_2019-11-19 22-59-59.xlsx'
+    # wb = FileManager(file_path).load_file()
+    # for num in range(2, 20):
+    #     test = RecordChecker(wb, num)
+    #     print(test.col_a, test.check_category_fg(), test.check_category_ed(),
+    #           test.check_category_j(), test.check_category_m())

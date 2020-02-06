@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
-# Form implementation generated from reading ui file 'window.ui'
-# Created by: PyQt5 UI code generator 5.13.2
-# WARNING! All changes made in this file will be lost!
+""" -*- coding: utf-8 -*-
+ Form implementation generated from reading ui file 'window.ui'
+ Created by: PyQt5 UI code generator 5.13.2
+ WARNING! All changes made in this file will be lost!"""
 
 import sys
 import os
@@ -77,8 +77,8 @@ class UiMainWindow(QWidget):
         Open file browser
         :return: object
         """
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open XLSX File', DIR,
-                                                            'Excel Files (*.xls *.xml *.xlsx *.xlsm)')
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open XLSX File',
+                                                            DIR, 'Excel Files (*.xls *.xml *.xlsx *.xlsm)')
 
         def test_file(file_path):
             """
